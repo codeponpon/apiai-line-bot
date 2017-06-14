@@ -7,7 +7,7 @@
   "env": {
     "APIAI_ACCESS_TOKEN": {
       "description": "Client access token for Api.ai",
-      "value": ""
+      "value": "e24VSKlUMmnX9bm1VEy2rA8/YBlRALt/h+wXTDrLbXPyvAvRAE3fokLNS7F5bEr5pEyF0+K1aOSFwkCWByjSBLB1dajHkDmJwht9DyK13FIiewKRft0PaPUgMHiIvrm1bwOAqUTN7UdY6ktO82tr7QdB04t89/1O/w1cDnyilFU="
     },
     "APIAI_LANG": {
       "description": "Agent language",
@@ -16,11 +16,11 @@
     },
     "LINE_CHANNEL_ID": {
       "description": "Channel ID from Line dashboard",
-      "value": ""
+      "value": "1519661491"
     },
     "LINE_CHANNEL_SECRET": {
       "description": "Channel Secret from Line dashboard",
-      "value": ""
+      "value": "abe356f66dd795bf48097757b8da48f7"
     },
     "LINE_MID": {
       "description": "MID from Line dashboard",

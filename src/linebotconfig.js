@@ -56,6 +56,7 @@ module.exports = class LineBotConfig {
         this._channelId = channelId;
         this._channelSecret = channelSecret;
         this._MID = MID;
+        this._devConfig = true;
     }
 
     toPlainDoc() {

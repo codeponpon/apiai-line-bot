@@ -43,34 +43,50 @@ module.exports = class LineBot {
 
     processMessage(message, res) {
         if (this._botConfig.devConfig) {
-            console.log("message", message);
+            console.log("messages", message);
         }
 
-        if (message.content && message.content.from && message.content.text) {
-            let chatId = message.content.from;
-            let messageText = message.content.text;
+        if (message.postback) {
+            console.log("didalam postback if", message);
+            message.message = {
+                text : message.postback.data
+            };
+        }
+        console.log("diluar postback",message);
 
-            console.log(chatId, messageText);
+        if (message.source.userId && message.message.text) {
+
+            console.log("message if else ", message);
+
+            let chatId = message.source.userId;
+            var messageText = message.message.text;
+            let token = message.replyToken;
+
 
             if (messageText) {
-                if (!this._sessionIds.has(chatId)) {
-                    this._sessionIds.set(chatId, uuid.v1());
-                }
+                // if (!this._sessionIds.has(chatId)) {
+                //     this._sessionIds.set(chatId, uuid.v1());
+                // }
 
                 let apiaiRequest = this._apiaiService.textRequest(messageText,
                     {
-                        sessionId: this._sessionIds.get(chatId)
+                        sessionId: chatId
                     });
 
                 apiaiRequest.on('response', (response) => {
+                    console.log(JSON.stringify(response, null, 2));
                     if (LineBot.isDefined(response.result)) {
                         let responseText = response.result.fulfillment.speech;
 
-                        if (LineBot.isDefined(responseText)) {
-                            console.log('Response as text message');
-                            this.postLineMessage(chatId, responseText);
+                        if (response.result.fulfillment.data || null) {
+                            this.postLineRichMessage(token, chatId, response.result.fulfillment.data.line);
                         } else {
-                            console.log('Received empty speech');
+                            if (LineBot.isDefined(responseText)) {
+                                console.log('Response as text message');
+                                this.postLineMessage(token, chatId, responseText);
+                            } else {
+                                console.log('Received empty speech');
+                            }
                         }
                     } else {
                         console.log('Received empty result')
@@ -79,43 +95,63 @@ module.exports = class LineBot {
 
                 apiaiRequest.on('error', (error) => console.error(error));
                 apiaiRequest.end();
-            }
-            else {
+            } else {
                 console.log('Empty message');
             }
-        } else {
-            console.log('Empty message');
+        }
+        else {
+            console.log("message di else ", message);
         }
     }
 
-    postLineMessage(to, text) {
-        request.post("https://trialbot-api.line.me/v1/events", {
+    postLineRichMessage(token, to, payload) {
+        console.log("INI DATA APPS", JSON.stringify(payload, null, 2));
+        request.post("https://api.line.me/v2/bot/message/reply", {
             headers: {
-                'X-Line-ChannelID': this._botConfig.channelId,
-                'X-Line-ChannelSecret': this._botConfig.channelSecret,
-                'X-Line-Trusted-User-With-ACL': this._botConfig.MID
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + 'phFF06IUCTINLAhrQoi70UuZnFEHvtiLQQ0pem8Cqc41ZyfDSQWaMpbAGq43Y3t0pEyF0+K1aOSFwkCWByjSBLB1dajHkDmJwht9DyK13FI+KfEf+nIYHyvF4b5hb7IXkqOp+qMZJi06vXrgH/BMUwdB04t89/1O/w1cDnyilFU=',
             },
             json: {
-                to: [to],
-                toChannel: 1383378250,
-                eventType: "138311608800106203",
-                content: {
-                    contentType: 1,
-                    toType: 1,
-                    text: text
-                }
+                replyToken: token,
+                messages: [payload]
             }
         }, function (error, response, body) {
             if (error) {
                 console.error('Error while sending message', error);
                 return;
             }
-
             if (response.statusCode != 200) {
                 console.error('Error status code while sending message', body);
                 return;
             }
+            console.log('Send message succeeded');
+        });
+    }
 
+    postLineMessage(token, to, text) {
+        request.post("https://api.line.me/v2/bot/message/reply", {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + 'phFF06IUCTINLAhrQoi70UuZnFEHvtiLQQ0pem8Cqc41ZyfDSQWaMpbAGq43Y3t0pEyF0+K1aOSFwkCWByjSBLB1dajHkDmJwht9DyK13FI+KfEf+nIYHyvF4b5hb7IXkqOp+qMZJi06vXrgH/BMUwdB04t89/1O/w1cDnyilFU=',
+            },
+            json: {
+                replyToken: token,
+                messages: [
+                    {
+                        type: "text",
+                        text: text
+                    }
+                ]
+            }
+        }, function (error, response, body) {
+            if (error) {
+                console.error('Error while sending message', error);
+                return;
+            }
+            if (response.statusCode != 200) {
+                console.error('Error status code while sending message', body);
+                return;
+            }
             console.log('Send message succeeded');
         });
     }
