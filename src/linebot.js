@@ -83,14 +83,22 @@ module.exports = class LineBot {
                     if (LineBot.isDefined(response.result)) {
                         let responseText = response.result.fulfillment.speech;
 
-                        if (response.result.fulfillment.data || null) {
+                        if (response.result.fulfillment.data) {
+                            console.log("data");
                             this.postLineRichMessage(token, chatId, response.result.fulfillment.data.line);
-                        } else {
-                            if (LineBot.isDefined(responseText)) {
-                                console.log('Response as text message');
-                                this.postLineMessage(token, chatId, responseText);
-                            } else {
-                                console.log('Received empty speech');
+                        }else {
+                            if (!responseText) {
+                                console.log("fulfilmentmessage");
+                                var messages = response.result.fulfillment.messages[0];
+                                this.postLineRichMessage(token, chatId, messages.payload.line);
+                            }else{
+                                console.log("data lain lain");
+                                if (LineBot.isDefined(responseText)) {
+                                    console.log('Response as text message');
+                                    this.postLineMessage(token, chatId, responseText);
+                                } else {
+                                    console.log('Received empty speech');
+                                }
                             }
                         }
                     } else {
@@ -167,7 +175,7 @@ module.exports = class LineBot {
                     }
                 }
             } else {
-                console.log('Received empty result')
+                console.log('Received empty result');
             }
         });
         apiaiRequest.on('error', (error) => console.error(error));
