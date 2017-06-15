@@ -73,7 +73,7 @@ module.exports = class LineBot {
                 //     this._sessionIds.set(chatId, uuid.v1());
                 // }
 
-                getUserName(sessionId,(username)=> {
+                getUserName(chatId,(username)=> {
                     let apiaiRequest = this._apiaiService.textRequest(messageText,
                         {
                             sessionId: chatId,
@@ -246,10 +246,10 @@ module.exports = class LineBot {
     getUserName(userid,callback){
         request.get("https://api.line.me/v2/bot/profile/"+userid,{
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + 'phFF06IUCTINLAhrQoi70UuZnFEHvtiLQQ0pem8Cqc41ZyfDSQWaMpbAGq43Y3t0pEyF0+K1aOSFwkCWByjSBLB1dajHkDmJwht9DyK13FI+KfEf+nIYHyvF4b5hb7IXkqOp+qMZJi06vXrgH/BMUwdB04t89/1O/w1cDnyilFU=',
-            }
+            },json : true
         },function (error,response,body) {
+            console.log('Send message succeeded',body);
             if (error) {
                 console.error('Error while sending message', error);
                 return;
@@ -260,7 +260,6 @@ module.exports = class LineBot {
             }
             console.log('Send message succeeded',body);
             callback(body);
-
         });
     }
 
