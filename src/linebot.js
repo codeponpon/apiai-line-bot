@@ -52,8 +52,13 @@ module.exports = class LineBot {
                 text : message.postback.data
             };
         }
-        console.log("diluar postback",message);
 
+        if (message.message.type) {
+            if (message.message.type === "location") {
+                console.log("location",message.message)
+                this.messageForLocation(message.source.userId,message.message.latitude,message.message.longitude,message.replyToken);
+            }
+        }
         if (message.source.userId && message.message.text) {
 
             console.log("message if else ", message);
@@ -102,6 +107,71 @@ module.exports = class LineBot {
         else {
             console.log("message di else ", message);
         }
+    }
+
+    messageForLocation(sessionId,lat,long,token){
+
+        let eventObject = {
+            sender: {
+                id : sessionId
+            },
+            postback: {
+                payload: "FACEBOOK_LOCATION",
+                data: {
+                    lat : lat,
+                    long : long
+                }
+            }
+        };
+
+        let event  = {
+            name: "FACEBOOK_LOCATION",
+            data: {
+                lat : lat,
+                long : long
+            }
+        }
+
+        var options = {
+            sessionId :  sessionId,
+            originalRequest: {
+                data: eventObject,
+                source: "line"
+            },contexts : [
+                {
+                    name : "generic",
+                    parameters : {
+                        facebook_user_name : "VITSA from Line"
+                    }
+                }
+            ]
+        };
+
+        console.log("location event",JSON.stringify(eventObject));
+        console.log("location option",JSON.stringify(options));
+
+        let apiaiRequest = this._apiaiService.eventRequest(event,options);
+        apiaiRequest.on('response', (response) => {
+            console.log(response);
+            if (LineBot.isDefined(response.result)) {
+                let responseText = response.result.fulfillment.speech;
+
+                if (response.result.fulfillment.data || null) {
+                    this.postLineRichMessage(token, sessionId, response.result.fulfillment.data.line);
+                } else {
+                    if (LineBot.isDefined(responseText)) {
+                        console.log('Response as text message');
+                        this.postLineMessage(token, sessionId, responseText);
+                    } else {
+                        console.log('Received empty speech');
+                    }
+                }
+            } else {
+                console.log('Received empty result')
+            }
+        });
+        apiaiRequest.on('error', (error) => console.error(error));
+        apiaiRequest.end();
     }
 
     postLineRichMessage(token, to, payload) {
