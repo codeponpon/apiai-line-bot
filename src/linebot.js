@@ -73,41 +73,51 @@ module.exports = class LineBot {
                 //     this._sessionIds.set(chatId, uuid.v1());
                 // }
 
-                let apiaiRequest = this._apiaiService.textRequest(messageText,
-                    {
-                        sessionId: chatId
-                    });
+                getUserName(sessionId,(username)=> {
+                    let apiaiRequest = this._apiaiService.textRequest(messageText,
+                        {
+                            sessionId: chatId,
+                            contexts: [
+                                {
+                                    name: "generic",
+                                    parameters: {
+                                        facebook_user_name: username
+                                    }
+                                }
+                            ]
+                        });
 
-                apiaiRequest.on('response', (response) => {
-                    console.log(JSON.stringify(response, null, 2));
-                    if (LineBot.isDefined(response.result)) {
-                        let responseText = response.result.fulfillment.speech;
+                    apiaiRequest.on('response', (response) => {
+                        console.log(JSON.stringify(response, null, 2));
+                        if (LineBot.isDefined(response.result)) {
+                            let responseText = response.result.fulfillment.speech;
 
-                        if (response.result.fulfillment.data) {
-                            console.log("data");
-                            this.postLineRichMessage(token, chatId, response.result.fulfillment.data.line);
-                        }else {
-                            if (!responseText) {
-                                console.log("fulfilmentmessage");
-                                var messages = response.result.fulfillment.messages[0];
-                                this.postLineRichMessage(token, chatId, messages.payload.line);
-                            }else{
-                                console.log("data lain lain");
-                                if (LineBot.isDefined(responseText)) {
-                                    console.log('Response as text message');
-                                    this.postLineMessage(token, chatId, responseText);
+                            if (response.result.fulfillment.data) {
+                                console.log("data");
+                                this.postLineRichMessage(token, chatId, response.result.fulfillment.data.line);
+                            } else {
+                                if (!responseText) {
+                                    console.log("fulfilmentmessage");
+                                    var messages = response.result.fulfillment.messages[0];
+                                    this.postLineRichMessage(token, chatId, messages.payload.line);
                                 } else {
-                                    console.log('Received empty speech');
+                                    console.log("data lain lain");
+                                    if (LineBot.isDefined(responseText)) {
+                                        console.log('Response as text message');
+                                        this.postLineMessage(token, chatId, responseText);
+                                    } else {
+                                        console.log('Received empty speech');
+                                    }
                                 }
                             }
+                        } else {
+                            console.log('Received empty result')
                         }
-                    } else {
-                        console.log('Received empty result')
-                    }
-                });
+                    });
 
-                apiaiRequest.on('error', (error) => console.error(error));
-                apiaiRequest.end();
+                    apiaiRequest.on('error', (error) => console.error(error));
+                    apiaiRequest.end();
+                });
             } else {
                 console.log('Empty message');
             }
@@ -140,46 +150,45 @@ module.exports = class LineBot {
             }
         }
 
-        var options = {
-            sessionId :  sessionId,
-            originalRequest: {
-                data: eventObject,
-                source: "line"
-            },contexts : [
-                {
-                    name : "generic",
-                    parameters : {
-                        facebook_user_name : "VITSA from Line"
+        getUserName(sessionId,(username)=>{
+            var options = {
+                sessionId :  sessionId,
+                originalRequest: {
+                    data: eventObject,
+                    source: "line"
+                },contexts : [
+                    {
+                        name : "generic",
+                        parameters : {
+                            facebook_user_name : username
+                        }
                     }
-                }
-            ]
-        };
+                ]
+            };
 
-        console.log("location event",JSON.stringify(eventObject));
-        console.log("location option",JSON.stringify(options));
+            let apiaiRequest = this._apiaiService.eventRequest(event,options);
+            apiaiRequest.on('response', (response) => {
+                console.log(response);
+                if (LineBot.isDefined(response.result)) {
+                    let responseText = response.result.fulfillment.speech;
 
-        let apiaiRequest = this._apiaiService.eventRequest(event,options);
-        apiaiRequest.on('response', (response) => {
-            console.log(response);
-            if (LineBot.isDefined(response.result)) {
-                let responseText = response.result.fulfillment.speech;
-
-                if (response.result.fulfillment.data || null) {
-                    this.postLineRichMessage(token, sessionId, response.result.fulfillment.data.line);
-                } else {
-                    if (LineBot.isDefined(responseText)) {
-                        console.log('Response as text message');
-                        this.postLineMessage(token, sessionId, responseText);
+                    if (response.result.fulfillment.data || null) {
+                        this.postLineRichMessage(token, sessionId, response.result.fulfillment.data.line);
                     } else {
-                        console.log('Received empty speech');
+                        if (LineBot.isDefined(responseText)) {
+                            console.log('Response as text message');
+                            this.postLineMessage(token, sessionId, responseText);
+                        } else {
+                            console.log('Received empty speech');
+                        }
                     }
+                } else {
+                    console.log('Received empty result');
                 }
-            } else {
-                console.log('Received empty result');
-            }
+            });
+            apiaiRequest.on('error', (error) => console.error(error));
+            apiaiRequest.end();
         });
-        apiaiRequest.on('error', (error) => console.error(error));
-        apiaiRequest.end();
     }
 
     postLineRichMessage(token, to, payload) {
@@ -231,6 +240,27 @@ module.exports = class LineBot {
                 return;
             }
             console.log('Send message succeeded');
+        });
+    }
+
+    getUserName(userid,callback){
+        request.get("https://api.line.me/v2/bot/profile/"+userid,{
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + 'phFF06IUCTINLAhrQoi70UuZnFEHvtiLQQ0pem8Cqc41ZyfDSQWaMpbAGq43Y3t0pEyF0+K1aOSFwkCWByjSBLB1dajHkDmJwht9DyK13FI+KfEf+nIYHyvF4b5hb7IXkqOp+qMZJi06vXrgH/BMUwdB04t89/1O/w1cDnyilFU=',
+            }
+        },function (error,response,body) {
+            if (error) {
+                console.error('Error while sending message', error);
+                return;
+            }
+            if (response.statusCode != 200) {
+                console.error('Error status code while sending message', body);
+                return;
+            }
+            console.log('Send message succeeded',body);
+            callback(body);
+
         });
     }
 
