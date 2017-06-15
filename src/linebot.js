@@ -73,7 +73,7 @@ module.exports = class LineBot {
                 //     this._sessionIds.set(chatId, uuid.v1());
                 // }
 
-                getUserName(chatId,(username)=> {
+                this.getUserName(chatId,(username)=> {
                     let apiaiRequest = this._apiaiService.textRequest(messageText,
                         {
                             sessionId: chatId,
@@ -150,7 +150,7 @@ module.exports = class LineBot {
             }
         }
 
-        getUserName(sessionId,(username)=>{
+        this.getUserName(sessionId,(username)=>{
             var options = {
                 sessionId :  sessionId,
                 originalRequest: {
