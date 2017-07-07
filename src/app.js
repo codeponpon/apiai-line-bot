@@ -15,6 +15,7 @@ const APIAI_LANG = process.env.APIAI_LANG;
 
 const LINE_CHANNEL_ID = process.env.LINE_CHANNEL_ID;
 const LINE_CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET;
+const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const LINE_MID = process.env.LINE_MID;
 
 // console timestamps
@@ -47,7 +48,7 @@ app.post('/webhook', (req, res) => {
     }
 
     try {
-        console.log(botConfig);
+        console.log(req.body);
         if (req.body.events) {
             req.body.events.forEach(function (item) {
                 bot.processMessage(item, res);

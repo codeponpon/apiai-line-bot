@@ -196,7 +196,7 @@ module.exports = class LineBot {
         request.post("https://api.line.me/v2/bot/message/reply", {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + 'phFF06IUCTINLAhrQoi70UuZnFEHvtiLQQ0pem8Cqc41ZyfDSQWaMpbAGq43Y3t0pEyF0+K1aOSFwkCWByjSBLB1dajHkDmJwht9DyK13FI+KfEf+nIYHyvF4b5hb7IXkqOp+qMZJi06vXrgH/BMUwdB04t89/1O/w1cDnyilFU=',
+                'Authorization': 'Bearer ' + 'yUjmJ7BObmKI9Ii/XG6cs5okqYETch9e+AufuCLX7v08QphpEoQh6Qbk0bUiuQGRvk9QC58j3djI/vSGcUL2i8fhlA3ukdMo0NYSqEvm0lRbnyWDKmLNjrOJtug9A0ETUPI57EweFKjYOUwodAF+xQdB04t89/1O/w1cDnyilFU=',
             },
             json: {
                 replyToken: token,
@@ -219,7 +219,7 @@ module.exports = class LineBot {
         request.post("https://api.line.me/v2/bot/message/reply", {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + 'phFF06IUCTINLAhrQoi70UuZnFEHvtiLQQ0pem8Cqc41ZyfDSQWaMpbAGq43Y3t0pEyF0+K1aOSFwkCWByjSBLB1dajHkDmJwht9DyK13FI+KfEf+nIYHyvF4b5hb7IXkqOp+qMZJi06vXrgH/BMUwdB04t89/1O/w1cDnyilFU=',
+                'Authorization': 'Bearer ' + 'yUjmJ7BObmKI9Ii/XG6cs5okqYETch9e+AufuCLX7v08QphpEoQh6Qbk0bUiuQGRvk9QC58j3djI/vSGcUL2i8fhlA3ukdMo0NYSqEvm0lRbnyWDKmLNjrOJtug9A0ETUPI57EweFKjYOUwodAF+xQdB04t89/1O/w1cDnyilFU=',
             },
             json: {
                 replyToken: token,
@@ -246,7 +246,7 @@ module.exports = class LineBot {
     getUserName(userid,callback){
         request.get("https://api.line.me/v2/bot/profile/"+userid,{
             headers: {
-                'Authorization': 'Bearer ' + 'phFF06IUCTINLAhrQoi70UuZnFEHvtiLQQ0pem8Cqc41ZyfDSQWaMpbAGq43Y3t0pEyF0+K1aOSFwkCWByjSBLB1dajHkDmJwht9DyK13FI+KfEf+nIYHyvF4b5hb7IXkqOp+qMZJi06vXrgH/BMUwdB04t89/1O/w1cDnyilFU=',
+                'Authorization': 'Bearer ' + 'yUjmJ7BObmKI9Ii/XG6cs5okqYETch9e+AufuCLX7v08QphpEoQh6Qbk0bUiuQGRvk9QC58j3djI/vSGcUL2i8fhlA3ukdMo0NYSqEvm0lRbnyWDKmLNjrOJtug9A0ETUPI57EweFKjYOUwodAF+xQdB04t89/1O/w1cDnyilFU=',
             },json : true
         },function (error,response,body) {
             console.log('Send message succeeded',body);

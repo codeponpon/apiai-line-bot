@@ -1,7 +1,4 @@
 node_modules/
 npm-debug.log
 .idea/
-.idea/**/*
 package-lock.json
-.idea/apiai-line-bot.iml
-.idea/misc.xml
