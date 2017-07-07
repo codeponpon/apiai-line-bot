@@ -22,6 +22,10 @@
       "description": "Channel Secret from Line dashboard",
       "value": "cf07d88b203ab54f3f5463126f2c2288"
     },
+    "LINE_CHANNEL_ACCESS_TOKEN": {
+      "description": "Channel Token from Line dashboard",
+      "value": "yUjmJ7BObmKI9Ii/XG6cs5okqYETch9e+AufuCLX7v08QphpEoQh6Qbk0bUiuQGRvk9QC58j3djI/vSGcUL2i8fhlA3ukdMo0NYSqEvm0lRbnyWDKmLNjrOJtug9A0ETUPI57EweFKjYOUwodAF+xQdB04t89/1O/w1cDnyilFU="
+    },
     "LINE_MID": {
       "description": "MID from Line dashboard",
       "value": ""
